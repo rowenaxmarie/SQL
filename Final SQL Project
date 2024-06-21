@@ -1,0 +1,157 @@
+
+
+#1 What are the 5 countries that have purchased Rock music the most?
+
+SELECT
+    customers.Country,
+    COUNT(invoices.InvoiceId) AS OrderCount,
+    genres.Name
+FROM genres
+JOIN tracks
+    ON genres.GenreId = tracks.GenreId
+JOIN invoice_items
+    ON tracks.TrackId = invoice_items.TrackId
+JOIN invoices
+    ON invoice_items.InvoiceId = invoices.InvoiceId
+JOIN customers
+    ON invoices.CustomerId = customers.CustomerId
+WHERE genres.Name = 'Rock'
+GROUP BY customers.Country
+ORDER BY OrderCount DESC
+LIMIT 5;
+
+
+#2 What are the total sales in 2009?
+
+SELECT ROUND(SUM(Total),0) AS "2009 Sales"
+FROM chinook.Invoices
+WHERE InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31';
+
+
+#3 What top 3 genres have the most albums?
+
+SELECT genres.Name AS Genre,
+COUNT(tracks.AlbumId) AS "No. of Albums"
+FROM genres
+JOIN tracks ON genres.GenreId=tracks.GenreId
+GROUP BY genres.Name
+ORDER BY tracks.AlbumId asc
+LIMIT 3
+
+#4 Write a query that includes the purchased track name AND artist name with each invoice line ID.
+
+SELECT tracks.Name AS "Track Name",
+artists.Name AS "Artist",
+invoice_items.InvoiceLineId
+FROM tracks
+JOIN albums ON tracks.AlbumId=albums.AlbumId
+JOIN artists ON albums.AlbumId=artists.ArtistId
+JOIN invoice_items ON tracks.TrackId=invoice_items.InvoiceLineId
+
+#5 Show Customers (their full names, customer ID, and country) who are not in the US.
+
+SELECT c.CustomerId,
+c.FirstName,
+c.LastName,
+c.Country
+FROM customers as c
+WHERE c.Country <> "USA"
+
+#6 Show only the Customers from Brazil.
+
+SELECT c.CustomerId,
+c.FirstName,
+c.LastName,
+c.Country
+FROM customers as c
+WHERE c.Country = "Brazil"
+
+#7 Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
+
+SELECT c.FirstName,
+c.LastName,
+invoices.InvoiceId,
+invoices.InvoiceDate,
+c.Country
+FROM customers as c
+JOIN invoices ON c.CustomerId=invoices.InvoiceId
+WHERE c.Country = "Brazil"
+
+#8 Show the Employees who are Sales Agents.
+
+SELECT e.EmployeeId,
+e.LastName,
+e.FirstName,
+e.Title
+FROM employees AS e
+WHERE e.Title="Sales Support Agent"
+
+#9 Find a unique/distinct list of billing countries from the Invoice table.
+
+SELECT DISTINCT i.BillingCountry
+FROM invoices AS i
+
+#10 Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.
+
+SELECT
+e.FirstName,
+e.LastName,
+i.InvoiceId
+FROM chinook.employees e
+JOIN chinook.customers c ON e.EmployeeId=c.SupportRepId
+JOIN chinook.invoices i ON c.CustomerId=i.InvoiceId
+
+#11 Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+
+SELECT
+i.Total,
+c.FirstName,
+c.LastName,
+c.Country,
+e.FirstName,
+e.LastName
+FROM invoices i
+JOIN customers c ON i.InvoiceId=c.CustomerId
+JOIN employees e ON e.EmployeeId
+
+#12 How many Invoices were there in 2009?
+
+SELECT
+COUNT(*) AS "2009 Invoices"
+FROM invoices i
+WHERE i.InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31'
+
+#13 Write a query that includes the purchased track name with each invoice line ID.
+
+SELECT
+t.Name,
+ii.InvoiceLineId
+FROM tracks AS t
+JOIN invoice_items ii ON t.TrackId=ii.TrackId
+
+#14 Write a query that includes the purchased track name AND artist name with each invoice line ID.
+
+SELECT
+t.Name AS "Track Name",
+ii.InvoiceLineId,
+art.Name AS "Artist"
+FROM tracks AS t
+JOIN invoice_items ii ON t.TrackId=ii.TrackId
+JOIN albums a ON t.AlbumId=a.AlbumId
+JOIN artists art ON a.ArtistId=art.ArtistId
+
+#15 Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+
+SELECT
+t.Name,
+al.Title,
+m.Name,
+g.Name
+FROM tracks as t
+JOIN albums al ON t.AlbumId=al.AlbumId
+JOIN media_types m ON t.MediaTypeId=m.MediaTypeId
+JOIN genres g ON t.GenreId=g.GenreId
+
+#16 Show the total sales made by each sales agent.
+
+
