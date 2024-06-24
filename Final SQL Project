@@ -36,7 +36,7 @@ FROM genres
 JOIN tracks ON genres.GenreId=tracks.GenreId
 GROUP BY genres.Name
 ORDER BY tracks.AlbumId asc
-LIMIT 3
+LIMIT 3;
 
 #4 Write a query that includes the purchased track name AND artist name with each invoice line ID.
 
@@ -46,7 +46,7 @@ invoice_items.InvoiceLineId
 FROM tracks
 JOIN albums ON tracks.AlbumId=albums.AlbumId
 JOIN artists ON albums.AlbumId=artists.ArtistId
-JOIN invoice_items ON tracks.TrackId=invoice_items.InvoiceLineId
+JOIN invoice_items ON tracks.TrackId=invoice_items.InvoiceLineId;
 
 #5 Show Customers (their full names, customer ID, and country) who are not in the US.
 
@@ -55,7 +55,7 @@ c.FirstName,
 c.LastName,
 c.Country
 FROM customers as c
-WHERE c.Country <> "USA"
+WHERE c.Country <> "USA";
 
 #6 Show only the Customers from Brazil.
 
@@ -64,7 +64,7 @@ c.FirstName,
 c.LastName,
 c.Country
 FROM customers as c
-WHERE c.Country = "Brazil"
+WHERE c.Country = "Brazil";
 
 #7 Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
 
@@ -75,7 +75,7 @@ invoices.InvoiceDate,
 c.Country
 FROM customers as c
 JOIN invoices ON c.CustomerId=invoices.InvoiceId
-WHERE c.Country = "Brazil"
+WHERE c.Country = "Brazil";
 
 #8 Show the Employees who are Sales Agents.
 
@@ -84,12 +84,12 @@ e.LastName,
 e.FirstName,
 e.Title
 FROM employees AS e
-WHERE e.Title="Sales Support Agent"
+WHERE e.Title="Sales Support Agent";
 
 #9 Find a unique/distinct list of billing countries from the Invoice table.
 
 SELECT DISTINCT i.BillingCountry
-FROM invoices AS i
+FROM invoices AS i;
 
 #10 Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.
 
@@ -99,7 +99,7 @@ e.LastName,
 i.InvoiceId
 FROM chinook.employees e
 JOIN chinook.customers c ON e.EmployeeId=c.SupportRepId
-JOIN chinook.invoices i ON c.CustomerId=i.InvoiceId
+JOIN chinook.invoices i ON c.CustomerId=i.InvoiceId;
 
 #11 Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
 
@@ -112,14 +112,14 @@ e.FirstName,
 e.LastName
 FROM invoices i
 JOIN customers c ON i.InvoiceId=c.CustomerId
-JOIN employees e ON e.EmployeeId
+JOIN employees e ON e.EmployeeId;
 
 #12 How many Invoices were there in 2009?
 
 SELECT
 COUNT(*) AS "2009 Invoices"
 FROM invoices i
-WHERE i.InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31'
+WHERE i.InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31';
 
 #13 Write a query that includes the purchased track name with each invoice line ID.
 
@@ -127,7 +127,7 @@ SELECT
 t.Name,
 ii.InvoiceLineId
 FROM tracks AS t
-JOIN invoice_items ii ON t.TrackId=ii.TrackId
+JOIN invoice_items ii ON t.TrackId=ii.TrackId;
 
 #14 Write a query that includes the purchased track name AND artist name with each invoice line ID.
 
@@ -138,7 +138,7 @@ art.Name AS "Artist"
 FROM tracks AS t
 JOIN invoice_items ii ON t.TrackId=ii.TrackId
 JOIN albums a ON t.AlbumId=a.AlbumId
-JOIN artists art ON a.ArtistId=art.ArtistId
+JOIN artists art ON a.ArtistId=art.ArtistId;
 
 #15 Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
 
@@ -150,8 +150,39 @@ g.Name
 FROM tracks as t
 JOIN albums al ON t.AlbumId=al.AlbumId
 JOIN media_types m ON t.MediaTypeId=m.MediaTypeId
-JOIN genres g ON t.GenreId=g.GenreId
+JOIN genres g ON t.GenreId=g.GenreId;
 
 #16 Show the total sales made by each sales agent.
+
+SELECT
+e.FirstName,
+e.LastName,
+ROUND(SUM(i.Total),2) AS "Total Sales"
+FROM employees e
+JOIN customers c ON c.SupportRepId=e.EmployeeId
+JOIN invoices i ON i.CustomerId=c.CustomerId
+WHERE e.title="Sales Support Agent"
+GROUP BY e.FirstName;
+
+#17 Which sales agent made the most dollars in sales in 2009?
+
+SELECT
+e.FirstName,
+e.LastName,
+ROUND(SUM(i.Total),2) AS "Total Sales"
+
+FROM employees e
+
+JOIN customers c 
+ON c.SupportRepId=e.EmployeeId
+
+JOIN invoices i 
+ON i.CustomerId=c.CustomerId
+
+
+WHERE e.Title = "Sales Support Agent" AND i.InvoiceDate BETWEEN '2009-01-01' AND '2009-12-31'
+GROUP BY e.FirstName
+ORDER BY ROUND(SUM(i.Total),2) desc 
+LIMIT 1;
 
 
